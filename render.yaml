@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: book-library
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm run migrate && node index.js
+    envVars:
+      - key: PGDATABASE
+        fromDatabase:
+          name: book-library-database
+          property: database
+      - key: PGUSER
+        fromDatabase:
+          name: book-library-database
+          property: user
+      - key: PGPASSWORD
+        fromDatabase:
+          name: book-library-database
+          property: password
+      - key: PGHOST
+        fromDatabase:
+          name: book-library-database
+          property: host
+      - key: PGPORT
+        fromDatabase:
+          name: book-library-database
+          property: port
+
+databases:
+  - name: book-library-database
+    plan: free
+    region: frankfurt
+    databaseName: music_library
+    ipAllowList: []
