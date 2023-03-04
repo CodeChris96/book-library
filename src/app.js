@@ -1,5 +1,5 @@
 const express = require("express");
-
+const readerRouter = require("./routes/reader");
 const cors = require("cors");
 const app = express();
 const morgan = require("morgan");
@@ -13,5 +13,7 @@ app.use(helmet());
 app.get("/test", (req, res) => {
   return res.status(200).json({ Message: "Hello World!" });
 });
+
+app.use("/readers", readerRouter);
 
 module.exports = app;

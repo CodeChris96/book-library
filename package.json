@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha tests/**/*.js --exit --recursive --timeout 60000 --file ./tests/test-setup.js",
     "prestart": "node scripts/create-database.js",
-    "start": "nodemon -r dotenv/config index.js"
+    "start": "nodemon -r dotenv/config index.js",
+    "pretest": "node scripts/create-database.js test"
   },
   "keywords": [],
   "author": "",
