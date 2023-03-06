@@ -32,19 +32,27 @@ const findByPk = async (req, res) => {
 
 const updateReader = async (req, res) => {
   const readerId = req.params.id;
-  const { name, email } = req.body;
+  const { name, email, password } = req.body;
 
-  const reader = await Reader.findByPk(readerId);
+  const [rowsUpdated, [updatedReader]] = await Reader.update(
+    {
+      name: name,
+      email: email,
+      password: password,
+    },
+    {
+      returning: true,
+      where: {
+        id: readerId,
+      },
+    }
+  );
 
-  if (!reader) {
+  if (rowsUpdated === 0) {
     return res.status(404).json({ error: "The reader could not be found." });
   }
 
-  reader.name = name;
-  reader.email = email;
-  await reader.save();
-
-  res.status(200).json(reader);
+  return res.status(200).json(updatedReader);
 };
 
 const deleteReader = async (req, res) => {
@@ -55,9 +63,7 @@ const deleteReader = async (req, res) => {
   if (!reader) {
     return res.status(404).json({ error: "The reader could not be found." });
   }
-
   await reader.destroy();
-
   res.status(204).send();
 };
 

@@ -1,5 +1,6 @@
 const express = require("express");
 const readerRouter = require("./routes/reader");
+const bookRouter = require("./routes/book");
 const cors = require("cors");
 const app = express();
 const morgan = require("morgan");
@@ -15,5 +16,6 @@ app.get("/test", (req, res) => {
 });
 
 app.use("/readers", readerRouter);
+app.use("/books", bookRouter);
 
 module.exports = app;
