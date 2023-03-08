@@ -9,7 +9,6 @@ describe("/readers", () => {
   beforeEach(async () => {
     await Reader.destroy({ where: {} });
   });
-
   describe("with no records in the database", () => {
     describe("POST /readers", () => {
       it("creates a new reader in the database", async () => {
@@ -27,6 +26,62 @@ describe("/readers", () => {
         expect(newReaderRecord.name).to.equal("Harry Potter");
         expect(newReaderRecord.email).to.equal("harrypotter@hogwarts.edu");
         expect(newReaderRecord.password).to.equal("avada kedavra");
+      });
+
+      it("returns an error message if name is not provided", async () => {
+        const response = await request(app).post("/readers").send({
+          email: "harrypotter@hogwarts.edu",
+          password: "avada kedavra",
+        });
+
+        expect(response.status).to.equal(400);
+        expect(response.body.error).to.equal("Name is required.");
+      });
+
+      it("returns an error message if email is not provided", async () => {
+        const response = await request(app).post("/readers").send({
+          name: "Harry Potter",
+          password: "avada kedavra",
+        });
+
+        expect(response.status).to.equal(400);
+        expect(response.body.error).to.equal("Email is required.");
+      });
+
+      it("returns an error message if email is not correctly formatted", async () => {
+        const response = await request(app).post("/readers").send({
+          name: "Harry Potter",
+          email: "harrypotter",
+          password: "avada kedavra",
+        });
+
+        expect(response.status).to.equal(400);
+        expect(response.body.error).to.equal(
+          "Email is not formatted correctly."
+        );
+      });
+
+      it("returns an error message if password is not provided", async () => {
+        const response = await request(app).post("/readers").send({
+          name: "Harry Potter",
+          email: "harrypotter@hogwarts.edu",
+        });
+
+        expect(response.status).to.equal(400);
+        expect(response.body.error).to.equal("Password is required.");
+      });
+
+      it("returns an error message if password is too short", async () => {
+        const response = await request(app).post("/readers").send({
+          name: "Harry Potter",
+          email: "harrypotter@hogwarts.edu",
+          password: "1234567",
+        });
+
+        expect(response.status).to.equal(400);
+        expect(response.body.error).to.equal(
+          "Password must be at least 8 characters long."
+        );
       });
     });
   });

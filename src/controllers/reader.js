@@ -1,7 +1,31 @@
 const { Reader } = require("../models");
+const validator = require("validator");
 
 const createReader = async (req, res) => {
-  const newReader = await Reader.create(req.body);
+  const { name, email, password } = req.body;
+  if (!name) {
+    return res.status(400).json({ error: "Name is required." });
+  }
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required." });
+  }
+
+  if (!password) {
+    return res.status(400).json({ error: "Password is required." });
+  }
+
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({ error: "Email is not formatted correctly." });
+  }
+
+  if (password.length < 8) {
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 8 characters long." });
+  }
+
+  const newReader = await Reader.create({ name, email, password });
   res.status(201).json(newReader);
 };
 
