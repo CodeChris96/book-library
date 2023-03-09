@@ -43,6 +43,19 @@ describe("/books", () => {
         expect(response.status).to.equal(400);
         expect(response.body.error).to.equal("Title is required.");
       });
+
+      it("returns an error if the author is not provided", async () => {
+        const response = await request(app).post("/books").send({
+          title: "To the Lighthouse",
+          genre: "Modernist literature",
+          ISBN: "978-0-15-690739-1",
+        });
+        expect(response.status).to.equal(400);
+        expect(response.body.error).to.equal("Author is required.");
+      });
+    });
+    it("returns an error if the genre is too long", async () => {
+      const response = await request(app).post("/books").send({});
     });
   });
 
@@ -103,7 +116,6 @@ describe("/books", () => {
 
       it("returns a 404 if the book does not exist", async () => {
         const response = await request(app).get("/books/12345");
-
         expect(response.status).to.equal(404);
         expect(response.body.error).to.equal("The book could not be found.");
       });
