@@ -1,9 +1,31 @@
 const { Book } = require("../models");
+const createBookSchema = require("../schemas/createBookSchema");
 
 const createBook = async (req, res) => {
-  const newBook = await Book.create(req.body);
-  res.status(201).json(newBook);
+  try {
+    const { title, author, genre, ISBN } = await createBookSchema.validateAsync(
+      req.body
+    );
+    const newBook = await Book.create({ title, author, genre, ISBN });
+    res.status(201).json(newBook);
+  } catch (err) {
+    res.status(400).json({ error: err.details[0].message });
+  }
 };
+
+// const createBook = async (req, res) => {
+//   const { title, author } = req.body;
+//   if (!title) {
+//     return res.status(400).json({ error: "title is required." });
+//   }
+
+//   if (!author) {
+//     return res.status(400).json({ error: "author is required." });
+//   }
+
+//   const newBook = await Book.create(req.body);
+//   res.status(201).json(newBook);
+// };
 
 const findAllBooks = async (req, res) => {
   try {

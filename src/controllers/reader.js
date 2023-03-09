@@ -1,32 +1,16 @@
 const { Reader } = require("../models");
-const validator = require("validator");
+const createReaderSchema = require("../schemas/createReaderSchema");
 
 const createReader = async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name) {
-    return res.status(400).json({ error: "Name is required." });
+  try {
+    const { name, email, password } = await createReaderSchema.validateAsync(
+      req.body
+    );
+    const newReader = await Reader.create({ name, email, password });
+    res.status(201).json(newReader);
+  } catch (err) {
+    res.status(400).json({ error: err.details[0].message });
   }
-
-  if (!email) {
-    return res.status(400).json({ error: "Email is required." });
-  }
-
-  if (!password) {
-    return res.status(400).json({ error: "Password is required." });
-  }
-
-  if (!validator.isEmail(email)) {
-    return res.status(400).json({ error: "Email is not formatted correctly." });
-  }
-
-  if (password.length < 8) {
-    return res
-      .status(400)
-      .json({ error: "Password must be at least 8 characters long." });
-  }
-
-  const newReader = await Reader.create({ name, email, password });
-  res.status(201).json(newReader);
 };
 
 const findAllReader = async (req, res) => {
